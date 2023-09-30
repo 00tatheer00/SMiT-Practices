@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fancy Calculator</title>
+    <link rel="stylesheet" href="calculator.css">
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.calculator {
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 300px;
+    padding: 20px;
+}
+
+.output {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+.buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+button {
+    padding: 10px;
+    font-size: 1.2em;
+    background-color: #eee;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.operator {
+    background-color: #f88;
+    color: #fff;
+}
+
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="output">
+            <span id="result">0</span>
+        </div>
+        <div class="buttons">
+            <button class="operator">C</button>
+            <button class="operator">/</button>
+            <button>7</button>
+            <button>8</button>
+            <button>9</button>
+            <button class="operator">*</button>
+            <button>4</button>
+            <button>5</button>
+            <button>6</button>
+            <button class="operator">-</button>
+            <button>1</button>
+            <button>2</button>
+            <button>3</button>
+            <button class="operator">+</button>
+            <button>0</button>
+            <button>.</button>
+            <button class="operator" id="calculate">=</button>
+        </div>
+    </div>
+    <script src="calculator.js">
+        document.addEventListener("DOMContentLoaded", function () {
+    let currentValue = "0";
+    let currentOperator = null;
+    let prevValue = null;
+
+    const resultDisplay = document.getElementById("result");
+    const buttons = document.querySelectorAll("button");
+
+    buttons.forEach((button) => {
+        button.addEventListener("click", handleClick);
+    });
+
+    function handleClick(event) {
+        const value = event.target.textContent;
+        if (/\d/.test(value) || value === ".") {
+            if (currentValue === "0" && value !== ".") {
+                currentValue = value;
+            } else {
+                currentValue += value;
+            }
+        } else if (value === "C") {
+            clearCalculator();
+        } else if (value === "=") {
+            if (currentOperator && prevValue) {
+                currentValue = operate(prevValue, currentOperator, currentValue);
+                currentOperator = null;
+                prevValue = null;
+            }
+        } else {
+            if (currentOperator && prevValue) {
+                currentValue = operate(prevValue, currentOperator, currentValue);
+                prevValue = currentValue;
+            } else {
+                prevValue = currentValue;
+            }
+            currentOperator = value;
+            currentValue = "0";
+        }
+
+        updateDisplay();
+    }
+
+    function operate(a, operator, b) {
+        a = parseFloat(a);
+        b = parseFloat(b);
+        switch (operator) {
+            case "+":
+                return (a + b).toString();
+            case "-":
+                return (a - b).toString();
+            case "*":
+                return (a * b).toString();
+            case "/":
+                if (b === 0) {
+                    return "Error";
+                }
+                return (a / b).toString();
+            default:
+                return "Error";
+        }
+    }
+
+    function clearCalculator() {
+        currentValue = "0";
+        currentOperator = null;
+        prevValue = null;
+        updateDisplay();
+    }
+
+    function updateDisplay() {
+        resultDisplay.textContent = currentValue;
+    }
+});
+
+    </script>
+</body>
+</html>
